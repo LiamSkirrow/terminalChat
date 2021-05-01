@@ -28,8 +28,12 @@ int main(int argc, char **argv){
     int ymax, xmax;
     getmaxyx(stdscr, ymax, xmax);
 
-    WINDOW *win_write = newwin(ymax/4, xmax/4, 0, xmax/4);
-    WINDOW *win_read  = newwin(ymax/4, xmax/4, ymax/2, xmax/4);
+    //WINDOW *win_write = newwin(ymax/4, xmax/4, 0, xmax/4);
+    //WINDOW *win_read  = newwin(ymax/4, xmax/4, ymax/2, xmax/4);
+
+    WINDOW *win_read = newwin(ymax-6, xmax, 0, 0);
+    WINDOW *win_write  = newwin(5, xmax, ymax-5, 0);
+
 
     box(win_write, 0, 0);
     box(win_read, 0, 0);
@@ -44,6 +48,7 @@ int main(int argc, char **argv){
 
     for(count = 0; count < 10; count++){
         if(pid == 0){  //child process
+        
             wgetch(win_write);
             //wgetstr(win_write, buf);
 
@@ -51,7 +56,7 @@ int main(int argc, char **argv){
             wrefresh(win_read);
         }
         else{   //parent process
-            mvwprintw(win_read, 0, 0, "%d", count);
+            mvwprintw(win_read, 1, 1, "%d", count);
             wrefresh(win_read);
             wrefresh(win_write);
             sleep(1);
