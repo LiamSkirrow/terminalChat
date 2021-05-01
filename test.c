@@ -15,6 +15,8 @@
 - be able to scroll along typed text using arrow keys
 - be able to delete characters with backspace
 
+>> have a look into <form.h>, this may include the solution to using the arrow keys and backspace key
+   in the input text field
 
 */
 
@@ -34,6 +36,9 @@ int main(int argc, char **argv){
     WINDOW *win_read = newwin(ymax-6, xmax, 0, 0);
     WINDOW *win_write  = newwin(5, xmax, ymax-5, 0);
 
+    //enable arrow keys/backspace etc. 
+    keypad(win_write, TRUE);
+
 
     box(win_write, 0, 0);
     box(win_read, 0, 0);
@@ -43,15 +48,33 @@ int main(int argc, char **argv){
     wrefresh(win_write);
     wrefresh(win_read);
 
+    //might want to declare these at the top...
     int pid = fork();
-    int count;
+    int count; int ch;
+    int x = 0;
+    int y = 0;   //probably don't need to track y since it autowraps
+
 
     for(count = 0; count < 10; count++){
         if(pid == 0){  //child process
-        
-            wgetch(win_write);
-            //wgetstr(win_write, buf);
+            ch = wgetch(win_write);
 
+            //decode user input, TODO: note: this will probably go if <form.h> works
+            switch( ch ){
+                case KEY_LEFT:
+                    x--;
+                    break;
+                case KEY_RIGHT:
+                    x++;
+                    break;
+                
+                //TODO: other key inputs including ctrl+key inputs
+
+                //wgetch(win_write);
+                //wgetstr(win_write, buf);
+
+            }
+            wmove(win_write, y, ++x);
             wrefresh(win_write);
             wrefresh(win_read);
         }
