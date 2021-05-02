@@ -1,5 +1,6 @@
-#ignore file
+#ignore file, mainly executables
 server
 client
 terminalChat
 test
+formstest

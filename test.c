@@ -9,15 +9,13 @@
 #include <ncurses.h> 
 
 
-//TODO: to get minimal fuctionality
-/*
-- the cursor position moves onwards to the next row once a message is sent
-- be able to scroll along typed text using arrow keys
-- be able to delete characters with backspace
-
+/* TODO: to get minimal fuctionality
 >> have a look into <form.h>, this may include the solution to using the arrow keys and backspace key
    in the input text field
-
+- possibly modes similar to vim
+    - press 'i' to enter text into the input form field
+    - press 'esc' to enter scroll-mode, where 'j' & 'k' can be used to scroll through the chat history
+    - alternatively just use some combination of ctrl+KEY to enter scroll/insert modes
 */
 
 
@@ -52,15 +50,16 @@ int main(int argc, char **argv){
     int pid = fork();
     int count; int ch;
     int x = 0;
-    int y = 0;   //probably don't need to track y since it autowraps
+    int y = 0;
 
 
     for(count = 0; count < 10; count++){
         if(pid == 0){  //child process
-            ch = wgetch(win_write);
+            //ch = wgetch(win_write);
+            wgetnstr(win_write, buf, sizeof(buf));
 
             //decode user input, TODO: note: this will probably go if <form.h> works
-            switch( ch ){
+            /*switch( ch ){
                 case KEY_LEFT:
                     x--;
                     break;
@@ -73,13 +72,13 @@ int main(int argc, char **argv){
                 //wgetch(win_write);
                 //wgetstr(win_write, buf);
 
-            }
+            } */
             wmove(win_write, y, ++x);
             wrefresh(win_write);
             wrefresh(win_read);
         }
         else{   //parent process
-            mvwprintw(win_read, 1, 1, "%d", count);
+            mvwprintw(win_read, ++y, 1, "%d", count);
             wrefresh(win_read);
             wrefresh(win_write);
             sleep(1);
