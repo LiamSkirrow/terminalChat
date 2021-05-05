@@ -24,7 +24,8 @@
 typedef struct user{
     int user_fd;         //the user's socket fd
     char nickname[15];   //the user's nickname
-    int kickvotes;
+    int kickvotes;       //probs won't implement this lol
+    //store the time when connection was made?
 } USER;
 
 int main(int argc, char **argv){
@@ -109,7 +110,9 @@ int main(int argc, char **argv){
                 USER *u;
                 //addUser(&u);    //may need slightly custom data structure to remove the correct user from the list on disconnect
                 
-                //send welcome message to new client
+                //send welcome message to new client:
+                //- send IP of server to client
+                //- give list of currently online users (nicknames, maybe IPs???)
                 send(client_fd, "Hello client!", strlen("Hello client!"), 0);
                 sleep(2);
                 send(client_fd, "yo", strlen("yo"), 0);

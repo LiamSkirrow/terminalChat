@@ -12,7 +12,7 @@
 /* TODO: to get minimal fuctionality
 >> have a look into <form.h>, this may include the solution to using the arrow keys and backspace key
    in the input text field
-- possibly modes similar to vim
+- implement similar modes to vim:
     - press 'i' to enter text into the input form field
     - press 'esc' to enter scroll-mode, where 'j' & 'k' can be used to scroll through the chat history
     - alternatively just use some combination of ctrl+KEY to enter scroll/insert modes

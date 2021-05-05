@@ -23,9 +23,10 @@
 
 
 # General Notes
-* **_include a makefile?_**
+* **_include a makefile?_** 
 * C strings can only be so long as they have predetermined length, show the buffer length somewhere in the UI... Maybe update
   how many chars are remaining as the user types
+* _extend into an IRC client, or possibly an IRC bot?_
 
 
 # UI Notes

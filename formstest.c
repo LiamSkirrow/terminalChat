@@ -1,4 +1,5 @@
-//NOTE: taken from https://gist.github.com/alan-mushi/c8a6f34d1df18574f643 
+//NOTE: taken from https://gist.github.com/alan-mushi/c8a6f34d1df18574f643 as an example of how form.h
+//		should be used.
 
 /*
  * Simple ncurses form example with fields that actually behaves like fields.
