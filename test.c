@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <ncurses.h> 
+#include <form.h>
 
 
 /* TODO: to get minimal fuctionality
@@ -18,12 +19,18 @@
     - alternatively just use some combination of ctrl+KEY to enter scroll/insert modes
 */
 
+static FORM *form;
+static FIELD *fields[2];
+static WINDOW *win_read, *win_write;
+
 
 int main(int argc, char **argv){
     char buf[100];
     int ind = 0;
     initscr();
-    raw();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
 
     int ymax, xmax;
     getmaxyx(stdscr, ymax, xmax);
@@ -31,20 +38,36 @@ int main(int argc, char **argv){
     //WINDOW *win_write = newwin(ymax/4, xmax/4, 0, xmax/4);
     //WINDOW *win_read  = newwin(ymax/4, xmax/4, ymax/2, xmax/4);
 
-    WINDOW *win_read = newwin(ymax-6, xmax, 0, 0);
-    WINDOW *win_write  = newwin(5, xmax, ymax-5, 0);
-
-    //enable arrow keys/backspace etc. 
-    keypad(win_write, TRUE);
-
+    //initialise windows set size/location on screen
+    win_read  = newwin(ymax-6, xmax, 0, 0);
+    win_write = newwin(5, xmax, ymax-5, 0);
 
     box(win_write, 0, 0);
     box(win_read, 0, 0);
-    //mvwprintw(win, 0, 2, "File");
-    //wmove(win, 1, 1);
+    
+    //TODO: no offscreen buffers just yet
+    fields[0] = new_field(ymax-6, xmax, 0, 0, 0, 0);
+	fields[1] = new_field(5, xmax, ymax-5, 0, 0, 0);
 
-    wrefresh(win_write);
-    wrefresh(win_read);
+    set_field_buffer(fields[0], 0, "label1");
+	set_field_buffer(fields[1], 0, "val1");
+
+    set_field_opts(fields[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+	set_field_opts(fields[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+    set_field_back(fields[1], A_UNDERLINE);
+	//set_field_back(fields[3], A_UNDERLINE);
+
+    form = new_form(fields);
+
+    post_form(form);
+
+	refresh();
+	wrefresh(win_write);
+	wrefresh(win_read);
+
+    //wrefresh(win_write);
+    //wrefresh(win_read);
 
     //might want to declare these at the top...
     int pid = fork();
@@ -78,7 +101,7 @@ int main(int argc, char **argv){
             wrefresh(win_read);
         }
         else{   //parent process
-            mvwprintw(win_read, ++y, 1, "%d", count);
+            mvwprintw(win_read, ++y, 1, "yo %d", count);
             wrefresh(win_read);
             wrefresh(win_write);
             sleep(1);
@@ -94,6 +117,15 @@ int main(int argc, char **argv){
         kill(getppid(), SIGTERM);
     }
 
+
+    unpost_form(form);
+	free_form(form);
+	free_field(fields[0]);
+	free_field(fields[1]);
+	//free_field(fields[2]);
+	//free_field(fields[3]);
+	delwin(win_read);
+	delwin(win_write);
     endwin();
     return 0;
 }
